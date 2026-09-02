@@ -1,0 +1,27 @@
+[project]
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["python", "ai-agents", "claude-code", "codex-cli", "cli", "process-management", "developer-tools"]
+name = "tool-bridge"
+version = "0.1.0"
+description = "File-based bridge for detached Claude Code and Codex CLI jobs"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+bridge = "tool_bridge.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["tool_bridge*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[project.urls]
+Repository = "https://github.com/abetor/bridge"
+Documentation = "https://github.com/abetor/bridge#readme"
+Issues = "https://github.com/abetor/bridge/issues"

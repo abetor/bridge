@@ -1,0 +1,3 @@
+#!/bin/sh
+# Prevent doctor from discovering a user launcher beyond the fake PATH entry.
+exit 1

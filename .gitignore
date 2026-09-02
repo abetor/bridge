@@ -1,0 +1,25 @@
+__pycache__/
+.pytest_cache/
+*.egg-info/
+.DS_Store
+
+# Secrets: .env contains real values and must never be committed.
+# .env.sample and .env.example are documentation and may be tracked.
+# Keep both sample names outside the .env.* rule.
+.env
+.env.*
+!.env.sample
+!.env.example
+
+# Editors, local runtime state, logs, and generated output.
+.idea/
+.vscode/
+*.log
+logs/
+state/
+output/
+build/
+dist/
+
+# Local development environment created by the quick start.
+/.venv/
