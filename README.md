@@ -1,6 +1,6 @@
-# tool-bridge
+# bridge
 
-`tool-bridge` runs Claude Code and Codex CLI tasks as detached, observable jobs. A caller can disconnect, reconnect, inspect progress, cancel the whole process group, and retrieve the final answer without relying on an in-memory broker.
+`bridge` runs Claude Code and Codex CLI tasks as detached, observable jobs. A caller can disconnect, reconnect, inspect progress, cancel the whole process group, and retrieve the final answer without relying on an in-memory broker.
 
 [Quick start](#quick-start) | [Offline demo](#demo) | [Architecture](docs/DESIGN.md) | [Tests](#tests) | [Contributing and agent guide](AGENTS.md) | [MIT license](LICENSE)
 
@@ -52,7 +52,8 @@ Requirements:
   returns 1 if either is absent, even when jobs for the installed harness can run.
 - A writable data directory outside the repository.
 
-From a checkout:
+The repository is `bridge`, the distribution is `tool-bridge`, the Python package is
+`tool_bridge`, and the CLI is `bridge`. From a checkout:
 
 ```bash
 python3 -m venv .venv
@@ -110,7 +111,6 @@ That command uses authenticated external services and may consume subscription q
 - `install` is designed for a source checkout or editable installation because it installs repository-owned skill assets.
 - Codex invocation through execpolicy is an explicit trust boundary: matched `bridge` commands run outside the caller's Codex sandbox, while the child harness still receives the configured read-only or workspace-write mode.
 - Bridge transports and records answers but does not validate their quality.
-- The source, tests, public docs, and included smoke fixtures contain no intentional Cyrillic test data.
 
 ## Data and credential boundary
 
@@ -137,6 +137,11 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider
 The tests replace `HOME`, cwd, credential-like sample variables, and harness binaries with temporary local fakes. They cover permissions, prompt transport, process-derived state, boot identity, retries, cancellation, output caps, JSON contracts, installation, execpolicy matching, and environment scrubbing.
 
 This README documents the public commands and boundaries exercised by that suite.
+
+## Provenance
+
+This repository began as a public source snapshot of a personal tool. Earlier local development
+history is not included.
 
 ## License
 
