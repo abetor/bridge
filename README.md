@@ -1,5 +1,7 @@
 # bridge
 
+[![Tests](https://github.com/abetor/bridge/actions/workflows/tests.yml/badge.svg)](https://github.com/abetor/bridge/actions/workflows/tests.yml)
+
 `bridge` runs Claude Code and Codex CLI tasks as detached, observable jobs. A caller can disconnect, reconnect, inspect progress, cancel the whole process group, and retrieve the final answer without relying on an in-memory broker.
 
 [Quick start](#quick-start) | [Offline demo](#demo) | [Architecture](docs/DESIGN.md) | [Tests](#tests) | [Contributing and agent guide](AGENTS.md) | [MIT license](LICENSE)
