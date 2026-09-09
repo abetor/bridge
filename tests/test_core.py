@@ -710,10 +710,18 @@ def test_killed_worker_in_backoff_is_died_immediately(bridge, monkeypatch, capsy
     while "model at capacity" not in (job / "events.1.jsonl").read_text("utf-8") \
             and time.monotonic() < deadline:
         time.sleep(0.01)
-    os.kill(read_proc(job)["pid"], signal.SIGKILL)
+    # The event is recorded while the harness is still exiting. Kill the worker
+    # only once the harness is gone, otherwise wait correctly reports a live
+    # harness with a dead worker, which is a transient state, not died.
+    proc = read_proc(job)
+    deadline = time.monotonic() + 2
+    while jobs_module.process_in_group(proc.get("harness_pid"), proc["pgid"]) \
+            and time.monotonic() < deadline:
+        time.sleep(0.01)
+    os.kill(proc["pid"], signal.SIGKILL)
     started = time.monotonic()
     code, output = _wait(job_id, home, capsys, timeout=5)
-    assert code == EXIT_FAIL
+    assert code == EXIT_FAIL, output
     assert "died" in output
     assert time.monotonic() - started < 1
 
