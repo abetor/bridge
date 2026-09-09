@@ -718,6 +718,22 @@ def test_killed_worker_in_backoff_is_died_immediately(bridge, monkeypatch, capsy
     assert time.monotonic() - started < 1
 
 
+@pytest.mark.skipif(not Path("/proc").is_dir(), reason="zombie state is read from procfs")
+def test_zombie_process_is_not_alive_in_its_group():
+    # An exited child that nobody has reaped yet is a zombie: getpgid still
+    # answers, but the process must not count as a live worker or harness.
+    child = subprocess.Popen([sys.executable, "-c", "pass"], start_new_session=True)
+    deadline = time.monotonic() + 5
+    while not jobs_module._is_zombie(child.pid) and time.monotonic() < deadline:
+        time.sleep(0.01)
+    try:
+        assert jobs_module._is_zombie(child.pid)
+        assert not jobs_module.process_in_group(child.pid, child.pid)
+    finally:
+        child.wait()
+    assert not jobs_module._is_zombie(child.pid)
+
+
 def test_dead_worker_with_live_harness_is_reported_and_wait_does_not_block(
         tmp_path, capsys):
     home = tmp_path / "data"
