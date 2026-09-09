@@ -273,12 +273,30 @@ def process_group_alive(pgid: object) -> bool:
     return True
 
 
+def _is_zombie(pid: int) -> bool:
+    """True when procfs reports the process as a zombie (Linux only).
+
+    A killed worker leaves its harness child as a zombie until the new parent
+    reaps it. On Linux getpgid still succeeds for a zombie, so without this check
+    a wait issued right after the kill can report a live harness that is already
+    dead and return a transient exit code instead of died.
+    """
+    try:
+        with open(f"/proc/{pid}/stat", "rb") as handle:
+            stat = handle.read()
+    except OSError:
+        return False
+    # Fields after the last ")" of the command name; the first is the state.
+    fields = stat.rsplit(b")", 1)[-1].split()
+    return bool(fields) and fields[0] == b"Z"
+
+
 def process_in_group(pid: object, pgid: object) -> bool:
     """Check that a process is alive and belongs to the expected group."""
     if type(pid) is not int or pid <= 1 or type(pgid) is not int or pgid <= 1:
         return False
     try:
-        return os.getpgid(pid) == pgid
+        return os.getpgid(pid) == pgid and not _is_zombie(pid)
     except ProcessLookupError:
         return False
     except PermissionError:
